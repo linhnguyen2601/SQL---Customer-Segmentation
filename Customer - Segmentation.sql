@@ -38,7 +38,7 @@ select * from cte
 where abs((quantityordered - avg)/stddev) <= 3
 
 -- 3. EDA
--- Q1: Doanh thu theo từng ProductLine, Yearh và DealSize? Output: PRODUCTLINE, YEAR_ID, DEALSIZE, REVENUE
+-- Q1: Doanh thu theo từng ProductLine, Year và DealSize? Output: PRODUCTLINE, YEAR_ID, DEALSIZE, REVENUE
 	
 -- Q2: Đâu là tháng có bán tốt nhất mỗi năm? Output: MONTH_ID, REVENUE, ORDER_NUMBER
 	
