@@ -1,15 +1,15 @@
 -- 1. Tạo bảng trong PostgreSQL
 create table SALES_DATASET_RFM_PRJ
 (
-  ordernumber VARCHAR,
-  quantityordered VARCHAR,
-  priceeach        VARCHAR,
-  orderlinenumber  VARCHAR,
-  sales            VARCHAR,
-  orderdate        VARCHAR,
+  ordernumber INTEGER,
+  quantityordered INTEGER,
+  priceeach        FLOAT,
+  orderlinenumber  INTEGER,
+  sales            FLOAT,
+  orderdate        DATE,
   status           VARCHAR,
   productline      VARCHAR,
-  msrp             VARCHAR,
+  msrp             INTEGER,
   productcode      VARCHAR,
   customername     VARCHAR,
   phone            VARCHAR,
@@ -23,60 +23,30 @@ create table SALES_DATASET_RFM_PRJ
   contactfullname  VARCHAR,
   dealsize         VARCHAR
 ) 
+-- 2. Check null, blank, duplicate, xử lý outliers. Lưu bảng mới:
+	
+CREATE TABLE sales_dataset_rfm_clean as 
+	
+with cte as
+	(
+select *,
+(select avg(quantityordered) from sales_dataset_rfm_prj),
+(select stddev(quantityordered) from sales_dataset_rfm_prj)
+from sales_dataset_rfm_prj)
 
--- 2. Đổi kiểu dữ liệu
-ALTER TABLE SALES_DATASET_RFM_PRJ
-ALTER COLUMN ordernumber TYPE integer USING ordernumber::integer,
-ALTER COLUMN quantityordered TYPE integer USING quantityordered::integer,
-ALTER COLUMN priceeach TYPE float USING priceeach::double precision,
-ALTER COLUMN orderlinenumber TYPE integer USING orderlinenumber::integer,
-ALTER COLUMN sales TYPE float USING sales::double precision,
-ALTER COLUMN orderdate TYPE date USING orderdate::date,
-ALTER COLUMN msrp TYPE integer USING msrp::integer
+select * from cte
+where abs((quantityordered - avg)/stddev) <= 3
 
--- 3. Check Null/Blank
-select * from public.sales_dataset_rfm_prj
-where ordernumber is null
+-- 3. EDA
+-- Q1: Doanh thu theo từng ProductLine, Yearh và DealSize? Output: PRODUCTLINE, YEAR_ID, DEALSIZE, REVENUE
+	
+-- Q2: Đâu là tháng có bán tốt nhất mỗi năm?
+Output: MONTH_ID, REVENUE, ORDER_NUMBER
+-- Q3: Product line nào được bán nhiều ở tháng 11?
+Output: MONTH_ID, REVENUE, ORDER_NUMBER
+-- Q4: Đâu là sản phẩm có doanh thu tốt nhất ở UK mỗi năm? 
+Xếp hạng các các doanh thu đó theo từng năm.
+Output: YEAR_ID, PRODUCTLINE,REVENUE, RANK
+-- Q5: Ai là khách hàng tốt nhất, phân tích dựa vào RFM 
+(sử dụng lại bảng customer_segment ở buổi học 23)
 
-select * from public.sales_dataset_rfm_prj
-where quantityordered is null
-
-select * from public.sales_dataset_rfm_prj
-where priceeach is null
-
-select * from public.sales_dataset_rfm_prj
-where orderlinenumber is null
-
-select * from public.sales_dataset_rfm_prj
-where sales is null
-
-select * from public.sales_dataset_rfm_prj
-where orderdate is null
-
--- 4. Thêm cột CONTACTLASTNAME, CONTACTFIRSTNAME được tách ra từ CONTACTFULLNAME . 
-Chuẩn hóa CONTACTLASTNAME, CONTACTFIRSTNAME theo định dạng chữ cái đầu tiên viết hoa, chữ cái tiếp theo viết thường. 
-
-ALTER TABLE sales_dataset_rfm_prj
-ADD COLUMN first_name varchar,
-ADD COLUMN last_name varchar
-
-UPDATE sales_dataset_rfm_prj
-SET first_name = left(contactfullname, position('-' in contactfullname) -1),
-	last_name = right(contactfullname, length(contactfullname) - position('-' in contactfullname))
-
-ALTER TABLE sales_dataset_rfm_prj
-ADD COLUMN contactfirstname varchar,
-ADD COLUMN contactlastname varchar
-
-UPDATE sales_dataset_rfm_prj
-SET contactfirstname = concat(upper(left(first_name,1)),right(first_name, length(first_name)-1)),
-	contactlastname = concat(upper(left(last_name,1)),right(last_name, length(last_name)-1))
-
-ALTER TABLE sales_dataset_rfm_prj
-DROP first_name,
-DROP last_name
-
--- 5. Thêm cột QTR_ID, MONTH_ID, YEAR_ID lần lượt là Qúy, tháng, năm được lấy ra từ ORDERDATE 
-
--- 6. Tìm outlier (nếu có) cho cột QUANTITYORDERED và hãy chọn cách xử lý cho bản ghi đó (2 cách) ( Không chạy câu lệnh trước khi bài được review)
-Sau khi làm sạch dữ liệu, hãy lưu vào bảng mới  tên là SALES_DATASET_RFM_PRJ_CLEAN
