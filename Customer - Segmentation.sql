@@ -68,3 +68,15 @@ ALTER TABLE sales_dataset_rfm_prj
 ADD COLUMN contactfirstname varchar,
 ADD COLUMN contactlastname varchar
 
+UPDATE sales_dataset_rfm_prj
+SET contactfirstname = concat(upper(left(first_name,1)),right(first_name, length(first_name)-1)),
+	contactlastname = concat(upper(left(last_name,1)),right(last_name, length(last_name)-1))
+
+ALTER TABLE sales_dataset_rfm_prj
+DROP first_name,
+DROP last_name
+
+-- 5. Thêm cột QTR_ID, MONTH_ID, YEAR_ID lần lượt là Qúy, tháng, năm được lấy ra từ ORDERDATE 
+
+-- 6. Tìm outlier (nếu có) cho cột QUANTITYORDERED và hãy chọn cách xử lý cho bản ghi đó (2 cách) ( Không chạy câu lệnh trước khi bài được review)
+Sau khi làm sạch dữ liệu, hãy lưu vào bảng mới  tên là SALES_DATASET_RFM_PRJ_CLEAN
