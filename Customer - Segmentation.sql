@@ -40,13 +40,12 @@ where abs((quantityordered - avg)/stddev) <= 3
 -- 3. EDA
 -- Q1: Doanh thu theo từng ProductLine, Yearh và DealSize? Output: PRODUCTLINE, YEAR_ID, DEALSIZE, REVENUE
 	
--- Q2: Đâu là tháng có bán tốt nhất mỗi năm?
-Output: MONTH_ID, REVENUE, ORDER_NUMBER
--- Q3: Product line nào được bán nhiều ở tháng 11?
-Output: MONTH_ID, REVENUE, ORDER_NUMBER
--- Q4: Đâu là sản phẩm có doanh thu tốt nhất ở UK mỗi năm? 
-Xếp hạng các các doanh thu đó theo từng năm.
-Output: YEAR_ID, PRODUCTLINE,REVENUE, RANK
+-- Q2: Đâu là tháng có bán tốt nhất mỗi năm? Output: MONTH_ID, REVENUE, ORDER_NUMBER
+	
+-- Q3: Product line nào được bán nhiều ở tháng 11? Output: MONTH_ID, REVENUE, ORDER_NUMBER
+	
+-- Q4: Đâu là sản phẩm có doanh thu tốt nhất ở UK mỗi năm? Xếp hạng doanh thu đó theo từng năm. Output: YEAR_ID, PRODUCTLINE,REVENUE, RANK
+
 -- Q5: Ai là khách hàng tốt nhất, phân tích dựa vào RFM 
 (sử dụng lại bảng customer_segment ở buổi học 23)
 
